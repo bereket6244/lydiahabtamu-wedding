@@ -1,0 +1,22 @@
+# Never commit secrets
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+*.ppk
+.env
+.env.*
+*credentials*
+*secret*
+
+# Claude / editor internals
+.claude/
+.thumbnail
+
+# Local dev
+node_modules/
+vite-dev.*.log
+
+# OS
+.DS_Store
+Thumbs.db
