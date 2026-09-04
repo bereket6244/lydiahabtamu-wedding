@@ -500,7 +500,7 @@
     <div data-reveal="0.2" style="display: grid; grid-template-columns: minmax(0, 1fr) 1px auto 1px minmax(0, 1fr); align-items: center; column-gap: clamp(10px, 3.2vw, 28px); width: min(92vw, 760px);">
       <div style="font-size: clamp(14px, 4vw, 24px); letter-spacing: 0.34em; text-indent: 0.34em; color: #6E5B49; text-align: right;">{{ monthText }}</div>
       <div style="width: 1px; height: 64px; background: #B3A288;"></div>
-      <div style="font-size: clamp(60px, 15vw, 104px); font-weight: 300; color: #4A4036; line-height: 1;">20</div>
+      <div style="font-size: clamp(60px, 15vw, 104px); font-weight: 300; color: #4A4036; line-height: 1;">{{ dateNumberText }}</div>
       <div style="width: 1px; height: 64px; background: #B3A288;"></div>
       <div style="font-size: clamp(16px, 4.4vw, 26px); letter-spacing: 0.3em; text-indent: 0.3em; color: #6E5B49; text-align: left;">{{ yearText }}</div>
     </div>
@@ -618,8 +618,9 @@ class Component extends DCLogic {
       dateLabel: 'ቀን:',
       dayText: 'እሁድ',
       monthText: 'መስከ',
-      yearText: '2026',
-      timeText: 'ከቀኑ 5:30',
+      dateNumberText: '10',
+      yearText: '2019',
+      timeText: 'ከምሽቱ 11፡30',
       addCalendarText: 'ቀን መቁጠራ ላይ ያስፍሩ',
       venueLabel: 'ቦታ:',
       venueText: 'በቤተሰብ መኖሪያ፣ ቦሌ ቡልቡላ',
@@ -665,6 +666,7 @@ class Component extends DCLogic {
       dateLabel: 'DATE:',
       dayText: 'SUNDAY',
       monthText: 'SEPT',
+      dateNumberText: '20',
       yearText: '2026',
       timeText: 'AT 5:30 PM',
       addCalendarText: 'ADD TO CALENDAR',
