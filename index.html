@@ -540,7 +540,8 @@
   </section>
 
   <!-- ═══ Guest photos ═══ -->
-  <section id="guest-photos" data-screen-label="Guest Photos" style="background: #F1E7D3; padding: 46px 0 30px; display: flex; flex-direction: column; align-items: center; text-align: center; overflow: hidden;">
+  <section id="guest-memories" data-screen-label="Guest Photos" style="background: #F1E7D3; padding: 46px 0 30px; display: flex; flex-direction: column; align-items: center; text-align: center; overflow: hidden; scroll-margin-top: 18px;">
+    <span id="guest-photos" aria-hidden="true" style="position: absolute;"></span>
     <div data-reveal="0" style="display: flex; flex-direction: column; align-items: center; line-height: 1; padding: 0 24px;">
       <div style="font-size: {{ guestTitleFontSize }}; letter-spacing: 0.4em; text-indent: 0.4em; font-weight: 300; color: #6E5B49;">{{ guestTitle }}</div>
       <div style="font-family: 'Pinyon Script', cursive; font-size: clamp(44px, 9vw, 56px); color: #8A6B4C; margin-top: -6px; line-height: 1.2;">{{ memoriesTitle }}</div>
@@ -593,7 +594,13 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;butterflyCount&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;default&quot;: 4, &quot;min&quot;: 0, &quot;max&quot;: 16, &quot;step&quot;: 1, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Atmosphere&quot;}, &quot;butterflySpeed&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;default&quot;: 1, &quot;min&quot;: 0.4, &quot;max&quot;: 2, &quot;step&quot;: 0.1, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Atmosphere&quot;}, &quot;fallingPetals&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Atmosphere&quot;}}">
 class Component extends DCLogic {
-  state = { opened: false, playing: false, hasMusic: false, dovesReady: false, isAmharic: false };
+  state = {
+    opened: typeof window !== 'undefined' && ['#guest-memories', '#guest-photos'].includes(window.location.hash),
+    playing: false,
+    hasMusic: false,
+    dovesReady: false,
+    isAmharic: false
+  };
 
   constructor(props) {
     super(props);
@@ -738,7 +745,12 @@ class Component extends DCLogic {
     this.setState({ hasMusic: true });
     // Keep visitors on the sealed-envelope screen — no scrolling past it
     // until they open it and the hero butterfly is front and center.
-    this.lockScroll();
+    if (this.state.opened) {
+      this.initReveals();
+      setTimeout(() => this.scrollToGuestMemoriesFromHash('auto'), 0);
+    } else {
+      this.lockScroll();
+    }
     const kick = () => {
       this.startMusic();
       ['pointerdown', 'touchstart', 'keydown', 'scroll'].forEach(ev =>
@@ -746,7 +758,13 @@ class Component extends DCLogic {
     };
     ['pointerdown', 'touchstart', 'keydown', 'scroll'].forEach(ev =>
       window.addEventListener(ev, kick, { passive: true }));
+    window.addEventListener('hashchange', this.handleHashChange);
     setTimeout(() => this.initGuestGallery(), 0);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('hashchange', this.handleHashChange);
+    this.unlockScroll();
   }
 
   // ---- envelope ----
@@ -769,7 +787,31 @@ class Component extends DCLogic {
     setTimeout(() => {
       this.setState({ opened: true });
       this.unlockScroll();
+      this.scrollToGuestMemoriesFromHash('smooth');
     }, 2800);
+  };
+
+  isGuestMemoriesHash() {
+    return ['#guest-memories', '#guest-photos'].includes(window.location.hash);
+  }
+
+  scrollToGuestMemoriesFromHash(behavior = 'smooth') {
+    if (!this.isGuestMemoriesHash()) return;
+    const el = document.getElementById('guest-memories');
+    if (el) el.scrollIntoView({ behavior, block: 'start' });
+  }
+
+  handleHashChange = () => {
+    if (!this.isGuestMemoriesHash()) return;
+    if (this.state.opened) {
+      this.scrollToGuestMemoriesFromHash('smooth');
+      return;
+    }
+    this.setState({ opened: true }, () => {
+      this.unlockScroll();
+      this.initReveals();
+      this.scrollToGuestMemoriesFromHash('smooth');
+    });
   };
 
   scrollToInvite = () => {
