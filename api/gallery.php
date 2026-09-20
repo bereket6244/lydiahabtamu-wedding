@@ -25,8 +25,17 @@ try {
         $query->execute([$id]);
         if (!$query->fetch()) galleryError(404, 'Photo is no longer available.');
         $preview = ($_GET['size'] ?? '') === 'preview';
+        // Photo IDs are immutable. Revalidate visibility, then let the browser
+        // reuse its copy without transferring the image again.
+        $etag = '"' . hash('sha256', $id . ($preview ? '-preview-v2' : '-original')) . '"';
+        header('Cache-Control: private, no-cache');
+        header('ETag: ' . $etag);
+        if (trim($_SERVER['HTTP_IF_NONE_MATCH'] ?? '') === $etag) {
+            http_response_code(304);
+            exit;
+        }
         $cacheDir = sys_get_temp_dir() . '/guest-gallery-' . substr(hash('sha256', __DIR__), 0, 16);
-        $cachePath = $cacheDir . '/' . $id . '-v1.jpg';
+        $cachePath = $cacheDir . '/' . $id . '-v2.jpg';
         if ($preview && is_file($cachePath)) {
             header('Content-Type: image/jpeg');
             readfile($cachePath);

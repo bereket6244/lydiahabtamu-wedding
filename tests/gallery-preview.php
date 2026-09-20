@@ -17,7 +17,7 @@ ob_start(); imagejpeg($image, null, 96); $original = ob_get_clean();
 check($decoded === $original && $mime === 'image/jpeg', 'Original bytes must remain unchanged.');
 $preview = galleryPreview($decoded);
 $size = getimagesizefromstring($preview);
-check($size[0] === 960 && $size[1] === 600, 'Landscape must be resized without cropping.');
+check($size[0] === 720 && $size[1] === 450, 'Landscape must be resized without cropping.');
 $realPhoto = file_get_contents(__DIR__ . '/../assets/couple.jpg');
 check(strlen(galleryPreview($realPhoto)) < strlen($realPhoto) / 2, 'Photographic preview must substantially reduce transfer size.');
 if (function_exists('exif_read_data')) {
@@ -26,8 +26,8 @@ if (function_exists('exif_read_data')) {
         $exif = "Exif\0\0II" . pack('vVv', 42, 8, 1) . pack('vvVvvV', 0x112, 3, 1, $orientation, 0, 0);
         $rotated = substr($original, 0, 2) . "\xff\xe1" . pack('n', strlen($exif) + 2) . $exif . substr($original, 2);
         $result = getimagesizefromstring(galleryPreview($rotated));
-        check($result[0] === ($orientation >= 5 ? 600 : 960), 'EXIF orientation width: ' . $orientation);
-        check($result[1] === ($orientation >= 5 ? 960 : 600), 'EXIF orientation height: ' . $orientation);
+        check($result[0] === ($orientation >= 5 ? 450 : 720), 'EXIF orientation width: ' . $orientation);
+        check($result[1] === ($orientation >= 5 ? 720 : 450), 'EXIF orientation height: ' . $orientation);
     }
 }
 $transparent = imagecreatetruecolor(100, 200);

@@ -34,13 +34,14 @@ function galleryPreview(string $bytes): string
         $angle = [3 => 180, 4 => 180, 5 => -90, 6 => 90, 7 => 90, 8 => -90][$orientation] ?? 0;
         if ($angle) $image->rotateImage('#F1E7D3', $angle);
         $image->setImageOrientation(Imagick::ORIENTATION_TOPLEFT);
-        $scale = min(1, 960 / max($image->getImageWidth(), $image->getImageHeight()));
+        $scale = min(1, 720 / max($image->getImageWidth(), $image->getImageHeight()));
         $image->thumbnailImage(max(1, (int)round($image->getImageWidth() * $scale)), max(1, (int)round($image->getImageHeight() * $scale)));
         $image->setImagePage(0, 0, 0, 0);
         $image->setImageBackgroundColor('#F1E7D3');
         $image = $image->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
         $image->setImageFormat('jpeg');
-        $image->setImageCompressionQuality(78);
+        $image->setImageCompressionQuality(72);
+        $image->setInterlaceScheme(Imagick::INTERLACE_PLANE);
         $image->stripImage();
         return $image->getImageBlob();
     }
@@ -64,12 +65,13 @@ function galleryPreview(string $bytes): string
     }
     $width = imagesx($image);
     $height = imagesy($image);
-    $scale = min(1, 960 / max($width, $height));
+    $scale = min(1, 720 / max($width, $height));
     $preview = imagecreatetruecolor(max(1, (int)round($width * $scale)), max(1, (int)round($height * $scale)));
     imagefill($preview, 0, 0, imagecolorallocate($preview, 241, 231, 211));
     imagecopyresampled($preview, $image, 0, 0, 0, 0, imagesx($preview), imagesy($preview), $width, $height);
     ob_start();
-    imagejpeg($preview, null, 78);
+    imageinterlace($preview, true);
+    imagejpeg($preview, null, 72);
     $result = ob_get_clean();
     imagedestroy($image);
     imagedestroy($preview);

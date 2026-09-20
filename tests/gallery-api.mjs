@@ -5,12 +5,12 @@ import { spawn, spawnSync } from 'node:child_process';
 import assert from 'node:assert/strict';
 import http from 'node:http';
 const fetch = (url, options = {}) => new Promise((resolve, reject) => {
-  const req = http.request(url, { method: options.method || 'GET', agent: false }, res => {
+  const req = http.request(url, { method: options.method || 'GET', headers: options.headers, agent: false }, res => {
     const chunks = [];
     res.on('data', chunk => chunks.push(chunk));
     res.on('end', () => {
       const data = Buffer.concat(chunks);
-      resolve({ status: res.statusCode, json: async () => JSON.parse(data), arrayBuffer: async () => data });
+      resolve({ status: res.statusCode, headers: res.headers, json: async () => JSON.parse(data), arrayBuffer: async () => data });
     });
   });
   req.on('error', reject);
@@ -57,7 +57,13 @@ for ($i = 0; $i < 87; $i++) $query->execute([sprintf('00000000-0000-4000-8000-%0
   const id = '00000000-0000-4000-8000-000000000000';
   const original = Buffer.from(await (await fetch(base + '?image=' + id)).arrayBuffer());
   assert.deepEqual(original, await readFile('assets/couple.jpg'), 'Original is byte-for-byte unchanged');
-  const preview = Buffer.from(await (await fetch(base + '?image=' + id + '&size=preview')).arrayBuffer());
+  const previewResponse = await fetch(base + '?image=' + id + '&size=preview');
+  const preview = Buffer.from(await previewResponse.arrayBuffer());
+  const conditional = { headers: { 'If-None-Match': previewResponse.headers.etag } };
+  assert.equal(previewResponse.headers['cache-control'], 'private, no-cache');
+  const reused = await fetch(base + '?image=' + id + '&size=preview', conditional);
+  assert.equal(reused.status, 304, 'Unchanged public previews reuse browser cache');
+  assert.equal((await reused.arrayBuffer()).length, 0, 'Revalidation transfers no image bytes');
   assert(preview.length < original.length / 2);
   assert.deepEqual(Buffer.from(await (await fetch(base + '?image=' + id + '&size=preview')).arrayBuffer()), preview, 'Cached preview matches');
   for (const suffix of ['085', '086', '999']) {
@@ -66,6 +72,7 @@ for ($i = 0; $i < 87; $i++) $query->execute([sprintf('00000000-0000-4000-8000-%0
   assert.equal((await fetch(base + '?image=../../config.php')).status, 400);
   assert.equal((await fetch(base, { method: 'POST' })).status, 405);
   runFixture(['hide']);
+  assert.equal((await fetch(base + '?image=' + id + '&size=preview', conditional)).status, 404, 'Visibility is checked before conditional cache response');
   assert.equal((await fetch(base + '?image=' + id + '&size=preview')).status, 404, 'Hidden photos cannot leak from cache');
   console.log(`API checks passed: 85 public photos, visibility, ownership, originals, cache, invalid IDs, read-only methods. Preview ${preview.length}/${original.length} bytes.`);
 } finally {
