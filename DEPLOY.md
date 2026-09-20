@@ -39,4 +39,13 @@ First run also creates missing directories.
 ## Notes
 - The site uses relative paths, so it works fine under the `/yeabsrachristian` subpath.
 - `.github/workflows/deploy.yml` controls the deploy.
-- `scripts/deploy-cpanel.mjs` uploads only `index.html`, `support.js`, `flower-petal.png`, and `assets/**`.
+- `scripts/deploy-cpanel.mjs` uploads `index.html`, `support.js`, `flower-petal.png`, `assets/**`, and the two read-only gallery files `api/gallery.php` and `api/gallery-lib.php`.
+- The existing server `api/config.php`, `api/photos.php`, database, and original uploads are never replaced. The gallery uses the same database configuration and public visibility rules.
+- Gallery previews require PHP GD (with EXIF for rotated JPEGs) or Imagick. Previews are cached outside the web root; visibility is checked before serving each image. Originals are returned unchanged only when selected.
+- Dependencies deploy first. A live gallery/preview smoke test must succeed before `index.html` is uploaded last. A failed check leaves the previous invitation in place.
+
+## Gallery checks
+
+- Run `php tests/gallery-preview.php` with GD and EXIF enabled to verify dimensions, compression, orientation, transparency, and original preservation.
+- Run `node tests/gallery-api.mjs` with PHP GD/EXIF/PDO SQLite to test the real request handler against an isolated temporary database, including more than 80 photos and cached-image visibility. Set `PHP_BINARY` and JSON-array `PHP_TEST_ARGS` if PHP is not on PATH.
+- For browser testing, set `GALLERY_TEST_OUTPUT` to a temporary directory, run the preview test to generate images, then `node tests/serve-gallery.mjs`. This localhost fixture server never forwards writes to production.

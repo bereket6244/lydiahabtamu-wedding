@@ -17,6 +17,14 @@ jobs:
         with:
           node-version: 20
 
+      - name: Check gallery scripts
+        run: |
+          node --check assets/guest-gallery.js
+          php -l api/gallery.php
+          php -l api/gallery-lib.php
+          php tests/gallery-preview.php
+          node tests/gallery-api.mjs
+
       - name: Deploy public files via cPanel API
         env:
           CPANEL_HOST: ${{ secrets.CPANEL_HOST }}

@@ -18,6 +18,7 @@ const authHeader = `cpanel ${user}:${token}`;
 
 const rootFiles = new Set(["index.html", "support.js", "flower-petal.png"]);
 const rootDirs = new Set(["assets"]);
+const galleryApiFiles = new Set(["api/gallery-lib.php", "api/gallery.php"]);
 const skipDirs = new Set([
   ".git",
   ".github",
@@ -31,7 +32,7 @@ const skipDirs = new Set([
 function shouldUpload(localFile) {
   const relative = path.relative(sourceDir, localFile).replaceAll(path.sep, "/");
   const [first] = relative.split("/");
-  return rootFiles.has(relative) || rootDirs.has(first);
+  return rootFiles.has(relative) || rootDirs.has(first) || galleryApiFiles.has(relative);
 }
 
 async function cpanelApi2(module, func, params = {}) {
@@ -158,7 +159,35 @@ function curlJson(args) {
 await ensureDir(targetDir);
 
 const files = await listFiles(sourceDir);
+// Publish dependencies first; switch the invitation only after the read-only
+// gallery and image processing have passed a live smoke test.
+files.sort((a, b) => {
+  const rank = file => {
+    const relative = path.relative(sourceDir, file).replaceAll(path.sep, "/");
+    if (relative === "api/gallery-lib.php") return 0;
+    if (relative === "api/gallery.php") return 1;
+    if (relative === "index.html") return 3;
+    return 2;
+  };
+  return rank(a) - rank(b);
+});
 for (const file of files) {
+  if (path.relative(sourceDir, file) === "index.html") {
+    const base = new URL(process.env.SITE_URL || "https://menaincet.com/yeabsrachristian/");
+    const response = await fetch(new URL("api/gallery.php", base));
+    if (!response.ok) throw new Error(`Gallery check failed: HTTP ${response.status}. Invitation was not switched.`);
+    const listing = await response.json();
+    if (!Array.isArray(listing.photos)) throw new Error("Invalid gallery response. Invitation was not switched.");
+    if (listing.photos[0]) {
+      const preview = await fetch(new URL(listing.photos[0].previewSrc, base));
+      if (!preview.ok || !preview.headers.get("content-type")?.startsWith("image/")) {
+        throw new Error("Preview check failed. Invitation was not switched.");
+      }
+      const bytes = new Uint8Array(await preview.arrayBuffer());
+      if (bytes.length < 100 || bytes[0] !== 255 || bytes[1] !== 216) throw new Error("Invalid JPEG preview.");
+    }
+    console.log(`Gallery smoke test passed: ${listing.photos.length} public photos.`);
+  }
   await uploadFile(file);
 }
 
