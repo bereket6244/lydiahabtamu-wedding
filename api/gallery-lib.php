@@ -29,8 +29,14 @@ function galleryPreview(string $bytes): string
         $image->readImageBlob($bytes);
         $image->setIteratorIndex(0);
         $image = $image->getImage();
-        $image->autoOrientImage();
-        $image->thumbnailImage(960, 960, true, true);
+        $orientation = $image->getImageOrientation();
+        if (in_array($orientation, [2, 4, 5, 7], true)) $image->flopImage();
+        $angle = [3 => 180, 4 => 180, 5 => -90, 6 => 90, 7 => 90, 8 => -90][$orientation] ?? 0;
+        if ($angle) $image->rotateImage('#F1E7D3', $angle);
+        $image->setImageOrientation(Imagick::ORIENTATION_TOPLEFT);
+        $scale = min(1, 960 / max($image->getImageWidth(), $image->getImageHeight()));
+        $image->thumbnailImage(max(1, (int)round($image->getImageWidth() * $scale)), max(1, (int)round($image->getImageHeight() * $scale)));
+        $image->setImagePage(0, 0, 0, 0);
         $image->setImageBackgroundColor('#F1E7D3');
         $image = $image->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
         $image->setImageFormat('jpeg');
