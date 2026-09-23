@@ -7,11 +7,16 @@
 .guest-gallery-track img { user-select: none; -webkit-user-drag: none; }
 .guest-gallery-track.is-dragging { scroll-snap-type: none; scroll-behavior: auto; user-select: none; }
 .guest-gallery-track.is-dragging, .guest-gallery-track.is-dragging .guest-photo-view { cursor: grabbing; }
-.gallery-controls { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 0 clamp(16px, 2vw, 28px) 18px; }
-.gallery-navigation { display: flex; gap: 10px; }
-.gallery-navigation .guest-gallery-arrow { position: static; transform: none; width: 46px; height: 46px; box-shadow: none; }
+.gallery-strip { position: relative; }
+.gallery-controls { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 12px; padding: 0 clamp(16px, 2vw, 28px) 18px; }
+.gallery-navigation { position: absolute; inset: 20px 0 24px; pointer-events: none; }
+.gallery-navigation .guest-gallery-arrow { position: absolute; top: 12%; bottom: 12%; transform: none; width: clamp(44px, 5vw, 64px); height: auto; padding: 4px; border: 0; border-radius: 0; background: transparent; color: #8A6B4C; box-shadow: none; pointer-events: auto; }
+.gallery-navigation .guest-gallery-arrow[data-direction="prev"] { left: 0; }
+.gallery-navigation .guest-gallery-arrow[data-direction="next"] { right: 0; }
+.gallery-navigation .guest-gallery-arrow svg { width: 100%; height: 100%; filter: drop-shadow(0 0 2px #FBF5E9) drop-shadow(0 0 4px #FBF5E9); }
 .gallery-navigation .guest-gallery-arrow.is-visible { display: inline-flex; }
-.gallery-navigation .guest-gallery-arrow:hover, .gallery-navigation .guest-gallery-arrow:disabled { transform: none; }
+.gallery-navigation .guest-gallery-arrow:hover, .gallery-navigation .guest-gallery-arrow:disabled { transform: none; background: transparent; box-shadow: none; }
+.gallery-navigation .guest-gallery-arrow:focus-visible { outline: 2px solid #8A6B4C; outline-offset: -3px; }
 .gallery-controls .gallery-actions { padding: 0; }
 .gallery-download { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
 .gallery-actions { display: flex; justify-content: center; align-items: center; gap: 16px; flex-wrap: wrap; padding: 4px 20px 18px; color: #6E5B49; }

@@ -19,16 +19,24 @@
     all.type = 'button';
     all.setAttribute('aria-haspopup', 'dialog');
     actions.append(count, all);
-    let controls = track.parentElement.querySelector('.gallery-controls');
+    const shell = track.parentElement;
+    const strip = document.createElement('div');
+    strip.className = 'gallery-strip';
+    track.before(strip);
+    strip.append(track);
+    const navigation = shell.querySelector('.gallery-navigation') || document.createElement('div');
+    navigation.className = 'gallery-navigation';
+    navigation.append(prev, next);
+    strip.append(navigation);
+    [prev, next].forEach((button, index) => {
+      button.innerHTML = '<svg viewBox="0 0 48 320" preserveAspectRatio="none" fill="none" aria-hidden="true"><path d="' + (index ? 'M8 4L40 160L8 316' : 'M40 4L8 160L40 316') + '" stroke="currentColor" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
+    });
+    let controls = shell.querySelector('.gallery-controls');
     if (!controls) {
       // Also support an older cached invitation during deployment.
       controls = document.createElement('div');
       controls.className = 'gallery-controls';
-      const navigation = document.createElement('div');
-      navigation.className = 'gallery-navigation';
-      navigation.append(prev, next);
-      controls.append(navigation);
-      track.parentElement.append(controls);
+      shell.append(controls);
     }
     controls.append(actions);
 
