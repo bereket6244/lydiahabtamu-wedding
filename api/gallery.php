@@ -24,10 +24,11 @@ try {
         $query = $db->prepare('SELECT id FROM guest_photos WHERE id = ? AND hidden = 0 AND deleted_at IS NULL');
         $query->execute([$id]);
         if (!$query->fetch()) galleryError(404, 'Photo is no longer available.');
-        $preview = ($_GET['size'] ?? '') === 'preview';
+        $download = ($_GET['download'] ?? '') === '1';
+        $preview = !$download && ($_GET['size'] ?? '') === 'preview';
         // Photo IDs are immutable. Revalidate visibility, then let the browser
         // reuse its copy without transferring the image again.
-        $etag = '"' . hash('sha256', $id . ($preview ? '-preview-v2' : '-original')) . '"';
+        $etag = '"' . hash('sha256', $id . ($preview ? '-preview-v2' : ($download ? '-download' : '-original'))) . '"';
         header('Cache-Control: private, no-cache');
         header('ETag: ' . $etag);
         if (trim($_SERVER['HTTP_IF_NONE_MATCH'] ?? '') === $etag) {
@@ -46,6 +47,10 @@ try {
         $row = $query->fetch();
         if (!$row) galleryError(404, 'Photo is no longer available.');
         [$bytes, $mime] = galleryDecode($row['image_data']);
+        if ($download) {
+            $extension = $mime === 'image/jpeg' ? 'jpg' : substr($mime, 6);
+            header('Content-Disposition: attachment; filename="yeabsra-christian-' . $id . '.' . $extension . '"');
+        }
         if ($preview) {
             $bytes = galleryPreview($bytes);
             $mime = 'image/jpeg';

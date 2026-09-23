@@ -20,10 +20,11 @@ const server = http.createServer(async (req, res) => {
     if (url.pathname === '/api/gallery.php') {
       if (mode === 'error') return json({ error: 'Unavailable' }, 503);
       if (url.searchParams.has('image')) {
-        const preview = url.searchParams.get('size') === 'preview';
+        const download = url.searchParams.get('download') === '1';
+        const preview = !download && url.searchParams.get('size') === 'preview';
         if (!preview && mode === 'image-error') return json({ error: 'Unavailable' }, 503);
         const data = await fs.readFile(path.join(fixture, preview ? 'preview.jpg' : 'original.jpg'));
-        res.writeHead(200, { 'Content-Type': 'image/jpeg', 'Cache-Control': 'no-store' });
+        res.writeHead(200, { 'Content-Type': 'image/jpeg', 'Cache-Control': 'no-store', ...(download ? { 'Content-Disposition': 'attachment; filename="original.jpg"' } : {}) });
         return res.end(data);
       }
       const photos = mode === 'empty' ? [] : [...extra, ...Array.from({ length: 85 }, (_, i) => ({

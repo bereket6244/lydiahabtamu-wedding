@@ -19,7 +19,18 @@
     all.type = 'button';
     all.setAttribute('aria-haspopup', 'dialog');
     actions.append(count, all);
-    track.parentElement.append(actions);
+    let controls = track.parentElement.querySelector('.gallery-controls');
+    if (!controls) {
+      // Also support an older cached invitation during deployment.
+      controls = document.createElement('div');
+      controls.className = 'gallery-controls';
+      const navigation = document.createElement('div');
+      navigation.className = 'gallery-navigation';
+      navigation.append(prev, next);
+      controls.append(navigation);
+      track.parentElement.append(controls);
+    }
+    controls.append(actions);
 
     const dialog = document.createElement('dialog');
     dialog.className = 'gallery-dialog';
@@ -29,6 +40,10 @@
     viewer.className = 'gallery-dialog gallery-viewer';
     viewer.setAttribute('aria-label', 'Photo viewer');
     viewer.innerHTML = '<header class="gallery-header"><span data-position></span><button type="button" class="gallery-button" data-close></button></header><div class="gallery-viewer-frame"><img alt=""></div><p class="gallery-viewer-status" role="status" aria-live="polite"></p><div class="gallery-viewer-nav"><button type="button" class="gallery-button" data-prev></button><button type="button" class="gallery-button" data-retry hidden></button><button type="button" class="gallery-button" data-next></button></div>';
+    const download = document.createElement('a');
+    download.className = 'gallery-button gallery-download';
+    download.setAttribute('download', '');
+    viewer.querySelector('.gallery-header').insertBefore(download, viewer.querySelector('[data-close]'));
     document.body.append(dialog, viewer);
     const grid = dialog.querySelector('.gallery-grid');
     const image = viewer.querySelector('img');
@@ -45,7 +60,7 @@
       all: 'See full gallery', title: 'Our shared memories', back: 'Back to invitation', close: 'Close photo',
       hint: 'Tap any photo to view the full-resolution image.', loading: 'Loading photos…', retry: 'Try again',
       full: 'Loading full-resolution photo…', error: 'This photo could not load. Please try again.',
-      previous: 'Previous', next: 'Next', view: 'View photo', remove: 'Delete photo',
+      previous: 'Previous', next: 'Next', view: 'View photo', remove: 'Delete photo', download: 'Download original',
     } : {
       all: 'ሙሉ የፎቶ ማዕከለ ስዕላትን ይመልከቱ', title: 'የጋራ ትዝታዎቻችን', back: 'ወደ ግብዣው ይመለሱ', close: 'ፎቶውን ዝጋ',
       hint: 'ፎቶውን ሙሉ ጥራት ለማየት ይንኩ።', loading: 'ፎቶዎች በመጫን ላይ…', retry: 'እንደገና ይሞክሩ',
@@ -56,6 +71,7 @@
     const date = value => new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }).format(new Date(value));
     const syncLabels = () => {
       const text = words();
+      download.textContent = text.download || 'ሙሉ ጥራት ፎቶ አውርድ';
       all.textContent = failed ? text.retry : text.all;
       count.textContent = loading ? text.loading : (failed ? '' : photoCount());
       dialog.querySelector('h2').textContent = text.title;
@@ -84,6 +100,7 @@
       if (!photos[index]) return;
       selected = index;
       const photo = photos[index];
+      download.href = photo.src + '&download=1';
       const version = ++loadVersion;
       image.src = photo.previewSrc;
       image.alt = component.copy().photoAltFrom(date(photo.createdAt));
@@ -155,6 +172,7 @@
       thumb.alt = component.copy().photoAltFrom(date(photo.createdAt));
       thumb.loading = 'lazy';
       thumb.decoding = 'async';
+      thumb.draggable = false;
       thumb.src = photo.previewSrc;
       thumb.addEventListener('error', () => {
         thumb.hidden = true;
@@ -229,6 +247,45 @@
     };
     prev.addEventListener('click', () => scroll(-1));
     next.addEventListener('click', () => scroll(1));
+    // Keep native touch swiping; add mouse/pen dragging without turning a drag
+    // into a photo click or blocking keyboard activation.
+    let drag = null;
+    let suppressDragClick = false;
+    track.addEventListener('pointerdown', event => {
+      if (event.pointerType === 'touch' || event.button !== 0 || !event.isPrimary || event.target.closest('.guest-photo-delete, a')) return;
+      suppressDragClick = false;
+      drag = { id: event.pointerId, x: event.clientX, left: track.scrollLeft, moved: false };
+    });
+    track.addEventListener('pointermove', event => {
+      if (!drag || drag.id !== event.pointerId) return;
+      const delta = event.clientX - drag.x;
+      if (!drag.moved && Math.abs(delta) < 6) return;
+      if (!drag.moved) {
+        drag.moved = true;
+        track.classList.add('is-dragging');
+        track.setPointerCapture(event.pointerId);
+      }
+      event.preventDefault();
+      track.scrollLeft = drag.left - delta;
+    });
+    const finishDrag = event => {
+      if (!drag || drag.id !== event.pointerId) return;
+      suppressDragClick = drag.moved;
+      drag = null;
+      track.classList.remove('is-dragging');
+      if (track.hasPointerCapture(event.pointerId)) track.releasePointerCapture(event.pointerId);
+    };
+    track.addEventListener('pointerup', finishDrag);
+    track.addEventListener('pointercancel', finishDrag);
+    track.addEventListener('lostpointercapture', finishDrag);
+    track.addEventListener('pointerleave', event => { if (drag && !drag.moved) finishDrag(event); });
+    track.addEventListener('dragstart', event => event.preventDefault());
+    track.addEventListener('click', event => {
+      if (!suppressDragClick || event.detail === 0) return;
+      suppressDragClick = false;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }, true);
     track.addEventListener('scroll', syncScroll, { passive: true });
     window.addEventListener('resize', syncScroll);
     input.multiple = true;

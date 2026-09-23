@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Yeabsra &amp; Christian &mdash; Engagement Ceremony</title>
 <script src="./support.js"></script>
-<script src="assets/guest-gallery.js?v=1"></script>
+<script src="assets/guest-gallery.js?v=2"></script>
 </head>
 <body>
 <x-dc>
@@ -400,7 +400,7 @@
       .guest-gallery-arrow.is-visible { display: none; }
     }
   </style>
-  <link rel="stylesheet" href="assets/guest-gallery.css?v=1">
+  <link rel="stylesheet" href="assets/guest-gallery.css?v=2">
 </helmet>
 
 <div style="position: relative; overflow: clip; background: #F1E7D3; color: #4A4036; font-family: 'Cormorant Garamond', serif; min-height: 100vh;">
@@ -555,13 +555,14 @@
 
     <div data-reveal="0.24" class="guest-gallery-shell" style="margin-top: 24px;">
       <div style="position: absolute; left: 0; right: 0; top: -20px; height: 1px; background: linear-gradient(to right, transparent, #C0B098 18%, #C0B098 82%, transparent);"></div>
-      <button class="guest-gallery-arrow" data-direction="prev" type="button" aria-label="Previous photo">
-        <svg width="24" height="14" viewBox="0 0 24 14" fill="none" aria-hidden="true"><path d="M24 7H2M8 1L2 7l6 6" stroke="#8A6B4C" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-      </button>
+
       <div id="guest-gallery-track" class="guest-gallery-track" aria-live="polite"></div>
-      <button class="guest-gallery-arrow" data-direction="next" type="button" aria-label="Next photo">
+
+      <div class="gallery-controls"><div class="gallery-navigation"><button class="guest-gallery-arrow" data-direction="prev" type="button" aria-label="Previous photo">
+        <svg width="24" height="14" viewBox="0 0 24 14" fill="none" aria-hidden="true"><path d="M24 7H2M8 1L2 7l6 6" stroke="#8A6B4C" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </button><button class="guest-gallery-arrow" data-direction="next" type="button" aria-label="Next photo">
         <svg width="24" height="14" viewBox="0 0 24 14" fill="none" aria-hidden="true"><path d="M0 7h22M16 1l6 6-6 6" stroke="#8A6B4C" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-      </button>
+      </button></div></div>
       <div id="guest-gallery-empty" class="guest-gallery-empty" style="letter-spacing: {{ emptyGalleryLetterSpacing }}; text-indent: {{ emptyGalleryLetterSpacing }};">{{ emptyGalleryText }}</div>
     </div>
   </section>

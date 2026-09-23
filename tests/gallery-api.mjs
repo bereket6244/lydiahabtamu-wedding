@@ -57,6 +57,10 @@ for ($i = 0; $i < 87; $i++) $query->execute([sprintf('00000000-0000-4000-8000-%0
   const id = '00000000-0000-4000-8000-000000000000';
   const original = Buffer.from(await (await fetch(base + '?image=' + id)).arrayBuffer());
   assert.deepEqual(original, await readFile('assets/couple.jpg'), 'Original is byte-for-byte unchanged');
+  const download = await fetch(base + '?image=' + id + '&download=1&size=preview');
+  assert.equal(download.status, 200);
+  assert.equal(download.headers['content-disposition'], 'attachment; filename="yeabsra-christian-' + id + '.jpg"');
+  assert.deepEqual(Buffer.from(await download.arrayBuffer()), original, 'Download is always the full-resolution original');
   const previewResponse = await fetch(base + '?image=' + id + '&size=preview');
   const preview = Buffer.from(await previewResponse.arrayBuffer());
   const conditional = { headers: { 'If-None-Match': previewResponse.headers.etag } };
@@ -72,6 +76,7 @@ for ($i = 0; $i < 87; $i++) $query->execute([sprintf('00000000-0000-4000-8000-%0
   assert.equal((await fetch(base + '?image=../../config.php')).status, 400);
   assert.equal((await fetch(base, { method: 'POST' })).status, 405);
   runFixture(['hide']);
+  assert.equal((await fetch(base + '?image=' + id + '&download=1')).status, 404, 'Hidden originals cannot be downloaded');
   assert.equal((await fetch(base + '?image=' + id + '&size=preview', conditional)).status, 404, 'Visibility is checked before conditional cache response');
   assert.equal((await fetch(base + '?image=' + id + '&size=preview')).status, 404, 'Hidden photos cannot leak from cache');
   console.log(`API checks passed: 85 public photos, visibility, ownership, originals, cache, invalid IDs, read-only methods. Preview ${preview.length}/${original.length} bytes.`);
