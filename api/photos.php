@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+ob_start();
+
 header('Content-Type: application/json; charset=utf-8');
 
 $configPath = __DIR__ . '/config.php';
@@ -14,6 +16,9 @@ $config = require $configPath;
 
 function respond($payload, int $status = 200): void
 {
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
     http_response_code($status);
     echo json_encode($payload);
     exit;
@@ -154,6 +159,9 @@ function downloadZip(PDO $pdo, array $config): void
     $zip->close();
 
     header_remove('Content-Type');
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
     header('Content-Type: application/zip');
     header('Content-Disposition: attachment; filename="yeabsra-christian-guest-photos.zip"');
     header('Content-Length: ' . filesize($zipPath));
@@ -181,6 +189,9 @@ function downloadPhoto(PDO $pdo, array $config): void
     $filename = 'yeabsra-christian-' . $date . '-' . $row['id'] . '.' . $parsed['extension'];
 
     header_remove('Content-Type');
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
     header('Content-Type: ' . $mime);
     $disposition = !empty($_GET['inline']) ? 'inline' : 'attachment';
     header('Content-Disposition: ' . $disposition . '; filename="' . $filename . '"');

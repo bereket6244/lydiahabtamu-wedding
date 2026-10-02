@@ -1,11 +1,20 @@
 <?php
 declare(strict_types=1);
 
+ob_start();
+
 // Read-only guest gallery. The existing photos.php continues to own uploads
 // and moderation; no schema changes or original-image rewrites are needed.
 require_once __DIR__ . '/gallery-lib.php';
 header('Cache-Control: private, no-store');
 header('X-Content-Type-Options: nosniff');
+
+function galleryCleanOutput(): void
+{
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
+}
 
 try {
     if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'GET') {
@@ -32,12 +41,14 @@ try {
         header('Cache-Control: private, no-cache');
         header('ETag: ' . $etag);
         if (trim($_SERVER['HTTP_IF_NONE_MATCH'] ?? '') === $etag) {
+            galleryCleanOutput();
             http_response_code(304);
             exit;
         }
         $cacheDir = sys_get_temp_dir() . '/guest-gallery-' . substr(hash('sha256', __DIR__), 0, 16);
         $cachePath = $cacheDir . '/' . $id . '-v2.jpg';
         if ($preview && is_file($cachePath)) {
+            galleryCleanOutput();
             header('Content-Type: image/jpeg');
             readfile($cachePath);
             exit;
@@ -62,6 +73,7 @@ try {
                 }
             }
         }
+        galleryCleanOutput();
         header('Content-Type: ' . $mime);
         header('Content-Length: ' . strlen($bytes));
         echo $bytes;
@@ -85,8 +97,10 @@ try {
             'canDelete' => $device !== '' && hash_equals($row['owner_id'], $device),
         ];
     }
+    galleryCleanOutput();
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode(['photos' => $photos], JSON_THROW_ON_ERROR);
 } catch (Throwable $error) {
+    galleryCleanOutput();
     galleryError(503, 'Guest photos are temporarily unavailable. Please try again.');
 }
