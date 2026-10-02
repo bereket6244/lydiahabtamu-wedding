@@ -1,6 +1,6 @@
-# Deploying the invitation to menaincet.com/yeabsrachristian
+# Deploying the invitation to menaincet.com/lydiahabtamu
 
-This repo auto-deploys to `https://menaincet.com/yeabsrachristian` whenever you push to `main`.
+This repo auto-deploys to `https://menaincet.com/lydiahabtamu` whenever you push to `main`.
 
 ## One-time setup
 
@@ -12,9 +12,9 @@ From this folder:
 ```bash
 git init
 git add .
-git commit -m "Engagement invitation site"
+git commit -m "Wedding invitation site"
 git branch -M main
-git remote add origin https://github.com/<you>/yeabachris-wedding.git
+git remote add origin https://github.com/<you>/lydiahabtamu-wedding.git
 git push -u origin main
 ```
 (Create the empty repo on github.com first, or use `gh repo create`.)
@@ -27,17 +27,17 @@ Repo → Settings → Secrets and variables → Actions → New repository secre
 | `CPANEL_HOST`  | `menaincet.com`                         |
 | `CPANEL_USER`  | cPanel username                          |
 | `CPANEL_TOKEN` | cPanel API token                         |
-| `CPANEL_TARGET_DIR` | `/home/menainpy/public_html/yeabsrachristian` |
+| `CPANEL_TARGET_DIR` | `/home/menainpy/public_html/lydiahabtamu` |
 
 Credentials live only in GitHub's encrypted secrets — never in the repo.
 The old `FTP_*` and `SSH_*` secrets can be deleted if this repo no longer uses them.
 
 ### 4. Push again (or run the workflow manually)
-Any push to `main` now uploads the public site files into `/home/menainpy/public_html/yeabsrachristian/`.
+Any push to `main` now uploads the public site files into `/home/menainpy/public_html/lydiahabtamu/`.
 First run also creates missing directories.
 
 ## Notes
-- The site uses relative paths, so it works fine under the `/yeabsrachristian` subpath.
+- The site uses relative paths, so it works fine under the `/lydiahabtamu` subpath.
 - `.github/workflows/deploy.yml` controls the deploy.
 - `scripts/deploy-cpanel.mjs` uploads `index.html`, `support.js`, `flower-petal.png`, `assets/**`, and the two read-only gallery files `api/gallery.php` and `api/gallery-lib.php`.
 - The existing server `api/config.php`, `api/photos.php`, database, and original uploads are never replaced. The gallery uses the same database configuration and public visibility rules.

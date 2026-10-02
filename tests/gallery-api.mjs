@@ -31,9 +31,9 @@ try {
   await writeFile(path.join(temp, 'config.php'), '<?php return [];');
   await writeFile(path.join(temp, 'fixture.php'), `<?php
 $db = new PDO('sqlite:' . __DIR__ . '/test.db');
-if (($argv[1] ?? '') === 'hide') { $db->exec('UPDATE guest_photos SET hidden = 1'); exit; }
-$db->exec('CREATE TABLE guest_photos (id TEXT PRIMARY KEY, owner_id TEXT, image_data TEXT, hidden INTEGER, deleted_at TEXT, created_at TEXT)');
-$query = $db->prepare('INSERT INTO guest_photos VALUES (?, ?, ?, ?, ?, ?)');
+if (($argv[1] ?? '') === 'hide') { $db->exec('UPDATE guest_photos_lydia_habtamu SET hidden = 1'); exit; }
+$db->exec('CREATE TABLE guest_photos_lydia_habtamu (id TEXT PRIMARY KEY, owner_id TEXT, image_data TEXT, hidden INTEGER, deleted_at TEXT, created_at TEXT)');
+$query = $db->prepare('INSERT INTO guest_photos_lydia_habtamu VALUES (?, ?, ?, ?, ?, ?)');
 $image = 'data:image/jpeg;base64,' . base64_encode(file_get_contents(__DIR__ . '/original.jpg'));
 for ($i = 0; $i < 87; $i++) $query->execute([sprintf('00000000-0000-4000-8000-%012d', $i), 'test-owner', $image, $i === 85 ? 1 : 0, $i === 86 ? '2026-09-20' : null, '2026-09-20 12:00:00']);
 `);
@@ -59,7 +59,7 @@ for ($i = 0; $i < 87; $i++) $query->execute([sprintf('00000000-0000-4000-8000-%0
   assert.deepEqual(original, await readFile('assets/couple.jpg'), 'Original is byte-for-byte unchanged');
   const download = await fetch(base + '?image=' + id + '&download=1&size=preview');
   assert.equal(download.status, 200);
-  assert.equal(download.headers['content-disposition'], 'attachment; filename="yeabsra-christian-' + id + '.jpg"');
+  assert.equal(download.headers['content-disposition'], 'attachment; filename="lydia-habtamu-' + id + '.jpg"');
   assert.deepEqual(Buffer.from(await download.arrayBuffer()), original, 'Download is always the full-resolution original');
   const previewResponse = await fetch(base + '?image=' + id + '&size=preview');
   const preview = Buffer.from(await previewResponse.arrayBuffer());

@@ -21,7 +21,7 @@ try {
         $id = (string)$_GET['image'];
         if (!preg_match('/^[a-f0-9-]{36}$/i', $id)) galleryError(400, 'Invalid photo.');
         // Check visibility on EVERY request, including cached previews.
-        $query = $db->prepare('SELECT id FROM guest_photos WHERE id = ? AND hidden = 0 AND deleted_at IS NULL');
+        $query = $db->prepare('SELECT id FROM guest_photos_lydia_habtamu WHERE id = ? AND hidden = 0 AND deleted_at IS NULL');
         $query->execute([$id]);
         if (!$query->fetch()) galleryError(404, 'Photo is no longer available.');
         $download = ($_GET['download'] ?? '') === '1';
@@ -42,14 +42,14 @@ try {
             readfile($cachePath);
             exit;
         }
-        $query = $db->prepare('SELECT image_data FROM guest_photos WHERE id = ? AND hidden = 0 AND deleted_at IS NULL');
+        $query = $db->prepare('SELECT image_data FROM guest_photos_lydia_habtamu WHERE id = ? AND hidden = 0 AND deleted_at IS NULL');
         $query->execute([$id]);
         $row = $query->fetch();
         if (!$row) galleryError(404, 'Photo is no longer available.');
         [$bytes, $mime] = galleryDecode($row['image_data']);
         if ($download) {
             $extension = $mime === 'image/jpeg' ? 'jpg' : substr($mime, 6);
-            header('Content-Disposition: attachment; filename="yeabsra-christian-' . $id . '.' . $extension . '"');
+            header('Content-Disposition: attachment; filename="lydia-habtamu-' . $id . '.' . $extension . '"');
         }
         if ($preview) {
             $bytes = galleryPreview($bytes);
@@ -72,7 +72,7 @@ try {
     if (!class_exists('Imagick') && !function_exists('imagecreatefromstring')) {
         throw new RuntimeException('Image processing unavailable.');
     }
-    $rows = $db->query('SELECT id, owner_id, created_at FROM guest_photos WHERE hidden = 0 AND deleted_at IS NULL ORDER BY created_at DESC, id DESC');
+    $rows = $db->query('SELECT id, owner_id, created_at FROM guest_photos_lydia_habtamu WHERE hidden = 0 AND deleted_at IS NULL ORDER BY created_at DESC, id DESC');
     $device = (string)($_GET['device_id'] ?? '');
     $photos = [];
     foreach ($rows as $row) {

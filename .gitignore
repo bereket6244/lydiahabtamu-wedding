@@ -6,6 +6,7 @@ id_ed25519*
 *.ppk
 .env
 .env.*
+api/config.php
 *credentials*
 *secret*
 
@@ -16,6 +17,7 @@ id_ed25519*
 # Local dev
 node_modules/
 vite-dev.*.log
+work/
 
 # OS
 .DS_Store

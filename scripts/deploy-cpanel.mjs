@@ -18,7 +18,7 @@ const authHeader = `cpanel ${user}:${token}`;
 
 const rootFiles = new Set(["index.html", "support.js", "flower-petal.png"]);
 const rootDirs = new Set(["assets"]);
-const galleryApiFiles = new Set(["api/gallery-lib.php", "api/gallery.php"]);
+const galleryApiFiles = new Set(["api/gallery-lib.php", "api/gallery.php", "api/photos.php"]);
 const skipDirs = new Set([
   ".git",
   ".github",
@@ -165,7 +165,7 @@ files.sort((a, b) => {
   const rank = file => {
     const relative = path.relative(sourceDir, file).replaceAll(path.sep, "/");
     if (relative === "api/gallery-lib.php") return 0;
-    if (relative === "api/gallery.php") return 1;
+    if (relative === "api/gallery.php" || relative === "api/photos.php") return 1;
     if (relative === "index.html") return 3;
     return 2;
   };
@@ -173,7 +173,9 @@ files.sort((a, b) => {
 });
 for (const file of files) {
   if (path.relative(sourceDir, file) === "index.html") {
-    const base = new URL(process.env.SITE_URL || "https://menaincet.com/yeabsrachristian/");
+    const base = new URL(process.env.SITE_URL || "https://menaincet.com/lydiahabtamu/");
+    const uploadApi = await fetch(new URL("api/photos.php", base));
+    if (!uploadApi.ok) throw new Error(`Upload API check failed: HTTP ${uploadApi.status}. Invitation was not switched.`);
     const response = await fetch(new URL("api/gallery.php", base));
     if (!response.ok) throw new Error(`Gallery check failed: HTTP ${response.status}. Invitation was not switched.`);
     const listing = await response.json();

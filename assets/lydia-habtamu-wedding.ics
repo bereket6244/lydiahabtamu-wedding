@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Mena Inc//Lydia Habtamu Wedding//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:lydia-habtamu-wedding-20261024@menaincet.com
+DTSTAMP:20261002T000000Z
+DTSTART:20261024T110000Z
+DTEND:20261024T170000Z
+SUMMARY:Lydia & Habtamu Wedding Ceremony
+LOCATION:International Evangelical Church; Sheraton Addis Hotel
+DESCRIPTION:Join us to celebrate Lydia Serkalem and Habtamu Netsanet's wedding ceremony. Vow ceremony at International Evangelical Church at 2:00 PM. Dinner reception at Sheraton Addis Hotel at 7:00 PM.
+END:VEVENT
+END:VCALENDAR

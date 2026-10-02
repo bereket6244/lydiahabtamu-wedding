@@ -163,7 +163,7 @@
       uploadText.textContent = busy ? component.copy().uploadingText : component.copy().sharePhotoText;
     };
     let device = '';
-    const key = 'yeabsra-christian-engagement-device-id';
+    const key = 'lydia-habtamu-wedding-device-id';
     try { device = localStorage.getItem(key) || ''; } catch {}
     if (!device) {
       device = crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2);

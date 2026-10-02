@@ -22,6 +22,7 @@ jobs:
           node --check assets/guest-gallery.js
           php -l api/gallery.php
           php -l api/gallery-lib.php
+          php -l api/photos.php
           php tests/gallery-preview.php
           node tests/gallery-api.mjs
 
