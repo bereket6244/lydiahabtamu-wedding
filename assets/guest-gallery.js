@@ -108,9 +108,9 @@
       if (!photos[index]) return;
       selected = index;
       const photo = photos[index];
-      download.href = photo.src + '&download=1';
+      download.href = originalUrl(photo, true);
       const version = ++loadVersion;
-      image.src = photo.previewSrc;
+      image.src = previewUrl(photo);
       image.alt = component.copy().photoAltFrom(date(photo.createdAt));
       imageStatus.textContent = words().full;
       retry.hidden = true;
@@ -130,7 +130,7 @@
         imageStatus.textContent = words().error;
         retry.hidden = false;
       };
-      full.src = photo.src;
+      full.src = originalUrl(photo);
     };
     for (const modal of [dialog, viewer]) {
       modal.querySelector('[data-close]').addEventListener('click', () => modal.close());
@@ -169,6 +169,16 @@
       device = crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2);
       try { localStorage.setItem(key, device); } catch {}
     }
+    const withVersion = (url, photo) => {
+      const joiner = url.includes('?') ? '&' : '?';
+      return url + joiner + 'v=' + encodeURIComponent(photo.createdAt || photo.id || '1');
+    };
+    const previewUrl = photo => withVersion(photo.previewSrc || photo.src, photo);
+    const originalUrl = (photo, download = false) => {
+      const url = photo.src || photo.previewSrc;
+      const joiner = url.includes('?') ? '&' : '?';
+      return withVersion(download ? url + joiner + 'download=1' : url, photo);
+    };
     const cardFor = (photo, index, allowDelete) => {
       const card = document.createElement('article');
       card.className = 'guest-photo-card';
@@ -178,11 +188,18 @@
       button.setAttribute('aria-label', words().view + ' ' + (index + 1));
       const thumb = document.createElement('img');
       thumb.alt = component.copy().photoAltFrom(date(photo.createdAt));
-      thumb.loading = 'lazy';
+      thumb.loading = index < 6 ? 'eager' : 'lazy';
+      if (index < 3) thumb.fetchPriority = 'high';
       thumb.decoding = 'async';
       thumb.draggable = false;
-      thumb.src = photo.previewSrc;
+      let triedOriginal = false;
+      thumb.src = previewUrl(photo);
       thumb.addEventListener('error', () => {
+        if (!triedOriginal) {
+          triedOriginal = true;
+          thumb.src = originalUrl(photo);
+          return;
+        }
         thumb.hidden = true;
         const note = document.createElement('span');
         note.className = 'gallery-photo-error';
@@ -190,7 +207,13 @@
         button.append(note);
       }, { once: true });
       button.append(thumb);
-      button.addEventListener('click', () => showPhoto(photos.findIndex(item => item.id === photo.id)));
+      const open = () => showPhoto(photos.findIndex(item => item.id === photo.id));
+      button.addEventListener('click', open);
+      card.addEventListener('click', event => {
+        if (event.target.closest('.guest-photo-delete')) return;
+        if (event.target.closest('.guest-photo-view')) return;
+        open();
+      });
       const meta = document.createElement('div');
       meta.className = 'guest-photo-meta';
       meta.textContent = date(photo.createdAt);

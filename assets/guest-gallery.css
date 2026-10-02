@@ -1,9 +1,9 @@
-.guest-photo-card { opacity: 1; transform: none; filter: none; flex-basis: min(76vw, 360px); }
-.guest-photo-card img { object-fit: contain; filter: none; background: #F1E7D3; box-sizing: border-box; }
+.guest-photo-card { opacity: 1; transform: none; filter: none; flex-basis: min(76vw, 360px); cursor: zoom-in; }
+.guest-photo-card img { width: 100%; aspect-ratio: 4 / 5; object-fit: contain; filter: none; background: #F1E7D3; box-sizing: border-box; display: block; }
 .guest-photo-card img[hidden] { display: none; }
 .guest-gallery-track { width: 100%; padding: 20px clamp(16px, 2vw, 28px) 24px; gap: clamp(16px, 2vw, 24px); scroll-padding-inline: clamp(16px, 2vw, 28px); scroll-snap-type: x proximity; cursor: grab; }
 .guest-gallery-track .guest-photo-card { scroll-snap-align: start; }
-.guest-gallery-track .guest-photo-view { cursor: grab; }
+.guest-gallery-track .guest-photo-view { cursor: zoom-in; }
 .guest-gallery-track img { user-select: none; -webkit-user-drag: none; }
 .guest-gallery-track.is-dragging { scroll-snap-type: none; scroll-behavior: auto; user-select: none; }
 .guest-gallery-track.is-dragging, .guest-gallery-track.is-dragging .guest-photo-view { cursor: grabbing; }
