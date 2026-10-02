@@ -28,25 +28,29 @@ function galleryPreview(string $bytes): string
     // Bound decompression memory before either image processor reads pixels.
     if (!$size || $size[0] * $size[1] > 50000000) throw new RuntimeException('Photo dimensions too large.');
     if (class_exists('Imagick')) {
-        $image = new Imagick();
-        $image->readImageBlob($bytes);
-        $image->setIteratorIndex(0);
-        $image = $image->getImage();
-        $orientation = $image->getImageOrientation();
-        if (in_array($orientation, [2, 4, 5, 7], true)) $image->flopImage();
-        $angle = [3 => 180, 4 => 180, 5 => -90, 6 => 90, 7 => 90, 8 => -90][$orientation] ?? 0;
-        if ($angle) $image->rotateImage('#F1E7D3', $angle);
-        $image->setImageOrientation(Imagick::ORIENTATION_TOPLEFT);
-        $scale = min(1, 720 / max($image->getImageWidth(), $image->getImageHeight()));
-        $image->thumbnailImage(max(1, (int)round($image->getImageWidth() * $scale)), max(1, (int)round($image->getImageHeight() * $scale)));
-        $image->setImagePage(0, 0, 0, 0);
-        $image->setImageBackgroundColor('#F1E7D3');
-        $image = $image->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
-        $image->setImageFormat('jpeg');
-        $image->setImageCompressionQuality(72);
-        $image->setInterlaceScheme(Imagick::INTERLACE_PLANE);
-        $image->stripImage();
-        return $image->getImageBlob();
+        try {
+            $image = new Imagick();
+            $image->readImageBlob($bytes);
+            $image->setIteratorIndex(0);
+            $image = $image->getImage();
+            $orientation = $image->getImageOrientation();
+            if (in_array($orientation, [2, 4, 5, 7], true)) $image->flopImage();
+            $angle = [3 => 180, 4 => 180, 5 => -90, 6 => 90, 7 => 90, 8 => -90][$orientation] ?? 0;
+            if ($angle) $image->rotateImage('#F1E7D3', $angle);
+            $image->setImageOrientation(Imagick::ORIENTATION_TOPLEFT);
+            $scale = min(1, 720 / max($image->getImageWidth(), $image->getImageHeight()));
+            $image->thumbnailImage(max(1, (int)round($image->getImageWidth() * $scale)), max(1, (int)round($image->getImageHeight() * $scale)));
+            $image->setImagePage(0, 0, 0, 0);
+            $image->setImageBackgroundColor('#F1E7D3');
+            $image = $image->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
+            $image->setImageFormat('jpeg');
+            $image->setImageCompressionQuality(72);
+            $image->setInterlaceScheme(Imagick::INTERLACE_PLANE);
+            $image->stripImage();
+            return $image->getImageBlob();
+        } catch (Throwable $error) {
+            if (!function_exists('imagecreatefromstring')) throw $error;
+        }
     }
     if (!function_exists('imagecreatefromstring')) throw new RuntimeException('Image processing unavailable.');
     $image = @imagecreatefromstring($bytes);
