@@ -63,14 +63,18 @@ try {
             header('Content-Disposition: attachment; filename="lydia-habtamu-' . $id . '.' . $extension . '"');
         }
         if ($preview) {
-            $bytes = galleryPreview($bytes);
-            $mime = 'image/jpeg';
-            if (is_dir($cacheDir) || @mkdir($cacheDir, 0700, true)) {
-                $temporary = tempnam($cacheDir, 'preview-');
-                if ($temporary !== false) {
-                    if (file_put_contents($temporary, $bytes) !== false) @rename($temporary, $cachePath);
-                    if (is_file($temporary)) @unlink($temporary);
+            try {
+                $bytes = galleryPreview($bytes);
+                $mime = 'image/jpeg';
+                if (is_dir($cacheDir) || @mkdir($cacheDir, 0700, true)) {
+                    $temporary = tempnam($cacheDir, 'preview-');
+                    if ($temporary !== false) {
+                        if (file_put_contents($temporary, $bytes) !== false) @rename($temporary, $cachePath);
+                        if (is_file($temporary)) @unlink($temporary);
+                    }
                 }
+            } catch (Throwable $error) {
+                header('X-Gallery-Preview-Fallback: original');
             }
         }
         galleryCleanOutput();
