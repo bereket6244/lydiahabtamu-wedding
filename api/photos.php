@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 declare(strict_types=1);
 
 header('Content-Type: application/json; charset=utf-8');
@@ -313,5 +313,3 @@ try {
 } catch (Throwable $error) {
     respond(['error' => 'Gallery service is temporarily unavailable.'], 500);
 }
-
-
