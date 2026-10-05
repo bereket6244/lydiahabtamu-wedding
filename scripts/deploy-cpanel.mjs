@@ -16,7 +16,7 @@ const targetDir = process.env.CPANEL_TARGET_DIR.replace(/\/+$/, "");
 const sourceDir = path.resolve(process.env.DEPLOY_SOURCE_DIR || ".");
 const authHeader = `cpanel ${user}:${token}`;
 
-const rootFiles = new Set(["index.html", "support.js", "flower-petal.png"]);
+const rootFiles = new Set([".htaccess", "index.html", "support.js", "flower-petal.png"]);
 const rootDirs = new Set(["assets"]);
 const galleryApiFiles = new Set(["api/gallery-lib.php", "api/gallery.php", "api/photos.php"]);
 const skipDirs = new Set([

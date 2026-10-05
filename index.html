@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Lydia &amp; Habtamu &mdash; Wedding Ceremony</title>
+<title>Habtamu &amp; Lydia &mdash; Wedding Ceremony</title>
 <script src="./support.js"></script>
 <script src="assets/guest-gallery.js?v=6"></script>
 </head>
@@ -12,10 +12,10 @@
 <helmet>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="image" href="assets/envelope-closed-lydia-habtamu-en.webp?v=2" fetchpriority="high">
-  <link rel="preload" as="image" href="assets/envelope-open-lydia-habtamu-en.webp?v=2" fetchpriority="high">
-  <link rel="preload" as="image" href="assets/envelope-closed-lydia-habtamu.webp">
-  <link rel="preload" as="image" href="assets/envelope-open-lydia-habtamu.webp">
+  <link rel="preload" as="image" href="assets/envelope-closed-lydia-habtamu-en.png?v=3" fetchpriority="high">
+  <link rel="preload" as="image" href="assets/envelope-open-lydia-habtamu-en.png?v=3" fetchpriority="high">
+  <link rel="preload" as="image" href="assets/envelope-closed-lydia-habtamu.png?v=3">
+  <link rel="preload" as="image" href="assets/envelope-open-lydia-habtamu.png?v=3">
   <link rel="preload" as="image" href="assets/doves-poster.webp" fetchpriority="high">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&amp;family=Pinyon+Script&amp;display=swap" rel="stylesheet">
   <style>
@@ -514,14 +514,6 @@
               <iframe title="International Evangelical Church map preview" src="https://maps.google.com/maps?q=8.99761,38.73894&amp;z=16&amp;output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" style="width: 100%; height: min(62vw, 360px); min-height: 260px; border: 0; display: block; filter: sepia(0.2) saturate(0.82) contrast(0.96);"></iframe>
             </div>
           </div>
-          <div style="border: 1px solid rgba(160, 132, 100, 0.55); background: rgba(250, 246, 238, 0.52); padding: clamp(20px, 5vw, 30px);">
-            <div style="font-size: clamp(14px, 3.8vw, 16px); letter-spacing: 0.32em; text-indent: 0.32em; color: #A08464;">{{ receptionLabel }}</div>
-            <div style="margin-top: 14px; font-size: clamp(24px, 5.6vw, 34px); color: #4A4036; line-height: 1.25;">{{ receptionVenue }}</div>
-            <div style="margin-top: 18px; font-size: clamp(16px, 4vw, 20px); color: #8A6B4C; line-height: 1.5;">{{ receptionTime }}</div>
-            <div style="margin-top: 22px; overflow: hidden; border: 1px solid rgba(160, 132, 100, 0.5); background: #E7D7BA;">
-              <iframe title="Sheraton Addis Hotel map preview" src="https://maps.google.com/maps?q=9.0203,38.75949&amp;z=16&amp;output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" style="width: 100%; height: min(62vw, 360px); min-height: 260px; border: 0; display: block; filter: sepia(0.2) saturate(0.82) contrast(0.96);"></iframe>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -569,7 +561,7 @@
     <div data-reveal="0.3" style="display: {{ footerNoteDisplay }}; margin-top: 18px; max-width: 560px; font-size: clamp(17px, 4.2vw, 20px); line-height: 1.55; font-style: italic; letter-spacing: {{ footerNoteLetterSpacing }}; text-indent: {{ footerNoteLetterSpacing }}; color: #7D6A55;">{{ footerNote }}</div>
     <div data-reveal="0.4" style="margin-top: 56px; display: flex; align-items: center; gap: 12px;">
       <div style="width: 40px; height: 1px; background: #C9B896;"></div>
-      <a href="https://menaincet.com" target="_blank" rel="noopener" style="font-size: 12px; letter-spacing: 0.4em; text-indent: 0.4em; color: #A99677; text-decoration: none;">MENA INC &middot; 2026</a>
+      <a href="https://menaincet.com" target="_blank" rel="noopener" style="font-size: 12px; letter-spacing: 0.4em; text-indent: 0.4em; color: #A99677; text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px;">MENA INC &middot; 2026</a>
       <div style="width: 40px; height: 1px; background: #C9B896;"></div>
     </div>
   </section>
@@ -600,8 +592,8 @@ class Component extends DCLogic {
     return this.state.isAmharic ? {
       languageToggleLabel: 'EN',
       languageToggleAria: 'Switch to English',
-      coverOpenSrc: 'assets/envelope-open-lydia-habtamu.webp',
-      coverClosedSrc: 'assets/envelope-closed-lydia-habtamu.webp',
+      coverOpenSrc: 'assets/envelope-open-lydia-habtamu.png?v=3',
+      coverClosedSrc: 'assets/envelope-closed-lydia-habtamu.png?v=3',
       coverOpenAlt: 'የተከፈተ የግብዣ ፖስታ',
       coverClosedAlt: 'የታሸገ የግብዣ ፖስታ፣ ለመክፈት ይንኩ',
       heroEyebrow: '',
@@ -609,7 +601,7 @@ class Component extends DCLogic {
       heroTitle: 'በክብር',
       heroInviteWord: 'ተጋብዘዋል',
       heroTagline: 'የጋብቻ ሥነ ሥርዓታችንን ከእኛ ጋር ለማክበር',
-      coupleNames: 'ሊዲያ & ሀብታሙ',
+      coupleNames: 'ሀብታሙ & ሊዲያ',
       dateLabel: 'ቀን:',
       dayText: 'ቅዳሜ',
       monthText: 'ጥቅምት',
@@ -627,9 +619,6 @@ class Component extends DCLogic {
       ceremonyVenueSecondary: '',
       ceremonyVenueSecondaryDisplay: 'none',
       ceremonyTime: 'ከቀኑ 8፡00 ሰዓት',
-      receptionLabel: 'የእራት ፕሮግራም',
-      receptionVenue: 'ሸራተን አዲስ ሆቴል',
-      receptionTime: 'ከምሽቱ 1፡00 ሰዓት',
       guestTitle: 'እንግዶች',
       guestTitleFontSize: '28px',
       memoriesTitle: 'ትዝታዎች',
@@ -663,8 +652,8 @@ class Component extends DCLogic {
     } : {
       languageToggleLabel: 'አማ',
       languageToggleAria: 'Switch to Amharic',
-      coverOpenSrc: 'assets/envelope-open-lydia-habtamu-en.webp?v=2',
-      coverClosedSrc: 'assets/envelope-closed-lydia-habtamu-en.webp?v=2',
+      coverOpenSrc: 'assets/envelope-open-lydia-habtamu-en.png?v=3',
+      coverClosedSrc: 'assets/envelope-closed-lydia-habtamu-en.png?v=3',
       coverOpenAlt: 'Opened envelope',
       coverClosedAlt: 'Sealed envelope, tap to open',
       heroEyebrow: 'YOU’RE',
@@ -672,7 +661,7 @@ class Component extends DCLogic {
       heroTitle: 'CORDIALLY',
       heroInviteWord: 'INVITED',
       heroTagline: 'to celebrate our wedding ceremony',
-      coupleNames: 'Lydia  &  Habtamu',
+      coupleNames: 'Habtamu  &  Lydia',
       dateLabel: 'DATE:',
       dayText: 'SATURDAY',
       monthText: 'OCT',
@@ -690,9 +679,6 @@ class Component extends DCLogic {
       ceremonyVenueSecondary: '',
       ceremonyVenueSecondaryDisplay: 'none',
       ceremonyTime: '2:00 PM',
-      receptionLabel: 'DINNER RECEPTION',
-      receptionVenue: 'Sheraton Addis Hotel',
-      receptionTime: '7:00 PM',
       guestTitle: 'GUEST',
       guestTitleFontSize: '34px',
       memoriesTitle: 'memories',
