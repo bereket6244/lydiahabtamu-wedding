@@ -6,6 +6,7 @@
 <title>Habtamu &amp; Lydia &mdash; Wedding Ceremony</title>
 <script src="./support.js?v=7"></script>
 <script src="assets/guest-gallery.js?v=6"></script>
+<script src="assets/couple-slideshow.js?v=2" defer></script>
 </head>
 <body>
 <x-dc>
@@ -464,8 +465,6 @@
     </div>
   </section>
 
-  <!-- Couple portrait intentionally hidden for now. Preserved assets for later: assets/couple-brush.webp and assets/couple.jpg. -->
-
   <!-- ═══ The date ═══ -->
   <section data-screen-label="The Date" style="background: #F1E7D3; padding: 26px 24px 58px; display: flex; flex-direction: column; align-items: center; text-align: center;">
     <div data-reveal="0" style="display: flex; align-items: center; gap: 14px; margin-bottom: 34px;">
@@ -483,6 +482,10 @@
       <div style="font-size: clamp(16px, 4.4vw, 26px); letter-spacing: 0.3em; text-indent: 0.3em; color: #6E5B49; text-align: left;">{{ yearText }}</div>
     </div>
     <a class="invitation-cta" data-reveal="0.45" href="assets/lydia-habtamu-wedding.ics" download="lydia-habtamu-wedding.ics" type="text/calendar" style="margin-top: 34px; display: inline-flex; align-items: center; justify-content: center; gap: 14px; border: 1px solid #A38044; border-radius: 999px; background: rgba(250, 246, 238, 0.38); padding: 15px clamp(22px, 6vw, 38px); font-size: clamp(13px, 3.8vw, 15px); font-weight: 500; letter-spacing: 0.35em; text-indent: 0.35em; color: #8A6B4C; text-decoration: none; white-space: nowrap; box-shadow: 0 8px 22px rgba(90, 70, 50, 0.08);">{{ addCalendarText }} <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 3v3M17 3v3M4.5 9.5h15M6.5 5h11A2.5 2.5 0 0 1 20 7.5v10A2.5 2.5 0 0 1 17.5 20h-11A2.5 2.5 0 0 1 4 17.5v-10A2.5 2.5 0 0 1 6.5 5Z" stroke="#8A6B4C" stroke-width="1.25" stroke-linecap="round"></path><path d="M12 12v5M9.5 14.5h5" stroke="#8A6B4C" stroke-width="1.25" stroke-linecap="round"></path></svg></a>
+  </section>
+
+  <section data-screen-label="The Couple" aria-label="Habtamu and Lydia's wedding photos" style="padding: 12px 24px 54px; background: #F1E7D3;">
+    <couple-slideshow style="display: block; width: min(100%, 480px); margin: 0 auto;"></couple-slideshow>
   </section>
 
   <!-- ═══ Event details ═══ -->
